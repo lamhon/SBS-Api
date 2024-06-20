@@ -3,13 +3,14 @@ import { JwtService } from "@nestjs/jwt";
 import { Request } from "express";
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AccessTokenGuard implements CanActivate {
     constructor(
         private jwtService: JwtService
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest()
+        console.log('request: ', request.headers)
 
         const token = this.extractTokenFromHeader(request)
 
@@ -34,6 +35,7 @@ export class AuthGuard implements CanActivate {
     }
 
     private extractTokenFromHeader(request: Request): string | undefined {
+        // console.log(request.headers.authorization)
         const [type, token] = request.headers.authorization.split(' ') ?? []
 
         return type === 'Bearer' ? token : undefined
